@@ -94,6 +94,8 @@ processing cost.
 Memory usage remained stable because the pipeline processes data in
 chunks rather than loading the entire dataset.
 
+The memory profiling graph shows an initial spike during worker initialization and chunk buffering, followed by stable oscillations during processing. Memory usage remains bounded and decreases after execution, confirming that data is processed in chunks rather than loaded entirely into memory. The peak usage of approximately 6.3 GB across 8 workers corresponds to less than 1 GB per core, satisfying the assignment’s memory constraint.
+
 ------------------------------------------------------------------------
 
 ## Anomaly Consistency Across Evaluations
@@ -109,8 +111,18 @@ This confirms that:
 
 ## Final Conclusion
 
-The pipeline is efficient in memory usage but limited in parallel
-speedup due to overhead.
+The performance evaluation demonstrates that the pipeline successfully handles large-scale AIS data using a **low-memory, streaming-based architecture**. Memory profiling confirms that usage remains bounded and stable, with a peak of approximately **6.3 GB across 8 workers (≈0.79 GB per core)**, satisfying the assignment’s memory constraint.
 
-Key insight: The system is I/O and communication bound rather than
-purely computational.
+Chunk-size optimization shows that **50,000 rows per chunk** provides the best balance between task overhead and processing efficiency, highlighting the importance of tuning data partitioning in parallel systems.
+
+However, the speedup analysis reveals **limited performance gains from increasing the number of workers**. This indicates that the system is not CPU-bound, but instead dominated by:
+- inter-process communication  
+- data serialization (pickling)  
+- task dispatch overhead  
+- result merging  
+
+As a result, additional parallelism yields diminishing returns.
+
+### Key Insight
+
+> The pipeline is **I/O- and communication-bound rather than computation-bound**, meaning that multiprocessing overhead limits scalability even though the architecture is correct and memory-efficient.
