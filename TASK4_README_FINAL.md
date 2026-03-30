@@ -36,7 +36,7 @@ python task4_benchmark.py aisdk-2025-06-09.csv --workers 1 2 4 8 --benchmark-chu
 -   `task4_results/speedup_wall_time.png`
 -   `task4_results/speedup_factor.png`
 
-### 📐 Formula Used
+### Formula Used
 
 Speedup = T1 / Tp
 
